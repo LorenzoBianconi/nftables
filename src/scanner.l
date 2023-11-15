@@ -391,6 +391,7 @@ addrstring	({macaddr}|{ip4addr}|{ip6addr})
 "flow"			{ return FLOW; }
 "offload"		{ return OFFLOAD; }
 "meter"			{ return METER; }
+<SCANSTATE_FLOWTABLE>"offload-xdp" { return OFFLOAD_XDP; }
 
 <SCANSTATE_CMD_LIST>{
 	"meters"		{ return METERS; }

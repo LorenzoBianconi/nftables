@@ -349,6 +349,7 @@ int nft_lex(void *, void *, void *);
 
 %token FLOW			"flow"
 %token OFFLOAD			"offload"
+%token OFFLOAD_XDP		"offload-xdp"
 %token METER			"meter"
 %token METERS			"meters"
 
@@ -2338,10 +2339,15 @@ flowtable_block_alloc	:	/* empty */
 			}
 			;
 
-flowtable_flag		:	OFFLOAD		{ $$ = FLOWTABLE_F_HW_OFFLOAD }
+flowtable_flag		:	OFFLOAD		{ $$ = FLOWTABLE_F_HW_OFFLOAD; }
+			|	OFFLOAD_XDP	{ $$ = FLOWTABLE_F_XDP_OFFLOAD; }
 			;
 
-flowtable_flag_list	:	flowtable_flag
+flowtable_flag_list	:	flowtable_flag	COMMA		flowtable_flag
+			{
+				$$ = $1 | $3;
+			}
+			|	flowtable_flag
 			;
 
 

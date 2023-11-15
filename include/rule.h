@@ -193,6 +193,7 @@ enum chain_flags {
  */
 enum flowtable_flags {
 	FLOWTABLE_F_HW_OFFLOAD	= 0x1, /* NF_FLOWTABLE_HW_OFFLOAD in linux nf_flow_table.h */
+	FLOWTABLE_F_XDP_OFFLOAD	= 0x4, /* NF_FLOWTABLE_XDP_OFFLOAD in linux nf_flow_table.h */
 };
 
 /**
