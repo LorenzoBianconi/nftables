@@ -202,6 +202,7 @@ addrstring	({macaddr}|{ip4addr}|{ip6addr})
 %s SCANSTATE_ARP
 %s SCANSTATE_AT
 %s SCANSTATE_CT
+%s SCANSTATE_FLOWTABLE
 %s SCANSTATE_COUNTER
 %s SCANSTATE_ETH
 %s SCANSTATE_GRE
@@ -326,7 +327,7 @@ addrstring	({macaddr}|{ip4addr}|{ip6addr})
 "set"			{ return SET; }
 "element"		{ return ELEMENT; }
 "map"			{ return MAP; }
-"flowtable"		{ return FLOWTABLE; }
+"flowtable"		{ scanner_push_start_cond(yyscanner, SCANSTATE_FLOWTABLE); return FLOWTABLE; }
 "handle"		{ return HANDLE; }
 "ruleset"		{ return RULESET; }
 

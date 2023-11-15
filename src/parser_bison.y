@@ -1050,6 +1050,7 @@ close_scope_udplite	: { scanner_pop_start_cond(nft->scanner, PARSER_SC_EXPR_UDPL
 close_scope_log		: { scanner_pop_start_cond(nft->scanner, PARSER_SC_STMT_LOG); }
 close_scope_synproxy	: { scanner_pop_start_cond(nft->scanner, PARSER_SC_STMT_SYNPROXY); }
 close_scope_xt		: { scanner_pop_start_cond(nft->scanner, PARSER_SC_XT); }
+close_scope_flowtable	: { scanner_pop_start_cond(nft->scanner, PARSER_SC_FLOWTABLE); }
 
 common_block		:	INCLUDE		QUOTED_STRING	stmt_separator
 			{
@@ -1192,7 +1193,7 @@ add_cmd			:	TABLE		table_spec
 				$$ = cmd_alloc(CMD_ADD, CMD_OBJ_ELEMENTS, &$2, &@$, $3);
 			}
 			|	FLOWTABLE	flowtable_spec	flowtable_block_alloc
-						'{'	flowtable_block	'}'
+						'{'	flowtable_block	'}'	close_scope_flowtable
 			{
 				$5->location = @5;
 				handle_merge(&$3->handle, &$2);
@@ -1309,7 +1310,7 @@ create_cmd		:	TABLE		table_spec
 				$$ = cmd_alloc(CMD_CREATE, CMD_OBJ_ELEMENTS, &$2, &@$, $3);
 			}
 			|	FLOWTABLE	flowtable_spec	flowtable_block_alloc
-						'{'	flowtable_block	'}'
+						'{'	flowtable_block	'}'	close_scope_flowtable
 			{
 				$5->location = @5;
 				handle_merge(&$3->handle, &$2);
@@ -1411,16 +1412,16 @@ delete_cmd		:	TABLE		table_or_id_spec
 			{
 				$$ = cmd_alloc(CMD_DELETE, CMD_OBJ_ELEMENTS, &$2, &@$, $3);
 			}
-			|	FLOWTABLE	flowtable_spec
+			|	FLOWTABLE	flowtable_spec	close_scope_flowtable
 			{
 				$$ = cmd_alloc(CMD_DELETE, CMD_OBJ_FLOWTABLE, &$2, &@$, NULL);
 			}
-			|	FLOWTABLE	flowtableid_spec
+			|	FLOWTABLE	flowtableid_spec	close_scope_flowtable
 			{
 				$$ = cmd_alloc(CMD_DELETE, CMD_OBJ_FLOWTABLE, &$2, &@$, NULL);
 			}
 			|	FLOWTABLE	flowtable_spec	flowtable_block_alloc
-						'{'	flowtable_block	'}'
+						'{'	flowtable_block	'}'	close_scope_flowtable
 			{
 				$5->location = @5;
 				handle_merge(&$3->handle, &$2);
@@ -1478,16 +1479,16 @@ destroy_cmd		:	TABLE		table_or_id_spec
 			{
 				$$ = cmd_alloc(CMD_DESTROY, CMD_OBJ_ELEMENTS, &$2, &@$, $3);
 			}
-			|	FLOWTABLE	flowtable_spec
+			|	FLOWTABLE	flowtable_spec	close_scope_flowtable
 			{
 				$$ = cmd_alloc(CMD_DESTROY, CMD_OBJ_FLOWTABLE, &$2, &@$, NULL);
 			}
-			|	FLOWTABLE	flowtableid_spec
+			|	FLOWTABLE	flowtableid_spec	close_scope_flowtable
 			{
 				$$ = cmd_alloc(CMD_DESTROY, CMD_OBJ_FLOWTABLE, &$2, &@$, NULL);
 			}
 			|	FLOWTABLE	flowtable_spec	flowtable_block_alloc
-						'{'	flowtable_block	'}'
+						'{'	flowtable_block	'}'	close_scope_flowtable
 			{
 				$5->location = @5;
 				handle_merge(&$3->handle, &$2);
@@ -1640,7 +1641,7 @@ list_cmd		:	TABLE		table_spec
 			{
 				$$ = cmd_alloc(CMD_LIST, CMD_OBJ_FLOWTABLES, &$2, &@$, NULL);
 			}
-			|	FLOWTABLE	flowtable_spec
+			|	FLOWTABLE	flowtable_spec	close_scope_flowtable
 			{
 				$$ = cmd_alloc(CMD_LIST, CMD_OBJ_FLOWTABLE, &$2, &@$, NULL);
 			}
@@ -1939,7 +1940,7 @@ table_block		:	/* empty */	{ $$ = $<table>-1; }
 
 			|	table_block	FLOWTABLE	flowtable_identifier
 					flowtable_block_alloc	'{'	flowtable_block	'}'
-					stmt_separator
+					stmt_separator	close_scope_flowtable
 			{
 				$4->location = @3;
 				handle_merge(&$4->handle, &$3);
