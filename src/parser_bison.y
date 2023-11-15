@@ -734,6 +734,7 @@ int nft_lex(void *, void *, void *);
 
 %type <flowtable>		flowtable_block_alloc flowtable_block
 %destructor { flowtable_free($$); }	flowtable_block_alloc
+%type <val>			flowtable_flag_list	flowtable_flag
 
 %type <obj>			obj_block_alloc counter_block quota_block ct_helper_block ct_timeout_block ct_expect_block limit_block secmark_block synproxy_block
 %destructor { obj_free($$); }	obj_block_alloc
@@ -2336,6 +2337,13 @@ flowtable_block_alloc	:	/* empty */
 			}
 			;
 
+flowtable_flag		:	OFFLOAD		{ $$ = FLOWTABLE_F_HW_OFFLOAD }
+			;
+
+flowtable_flag_list	:	flowtable_flag
+			;
+
+
 flowtable_block		:	/* empty */	{ $$ = $<flowtable>-1; }
 			|	flowtable_block	common_block
 			|	flowtable_block	stmt_separator
@@ -2361,9 +2369,9 @@ flowtable_block		:	/* empty */	{ $$ = $<flowtable>-1; }
 			{
 				$$->flags |= NFT_FLOWTABLE_COUNTER;
 			}
-			|	flowtable_block	FLAGS	OFFLOAD	stmt_separator
+			|	flowtable_block	FLAGS	flowtable_flag_list stmt_separator
 			{
-				$$->flags |= FLOWTABLE_F_HW_OFFLOAD;
+				$$->flags |= $3;
 			}
 			;
 
